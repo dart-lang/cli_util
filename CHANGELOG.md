@@ -1,3 +1,7 @@
+## 0.1.4+1
+
+- Fix and enforce a number of lints to improve package health score.
+
 ## 0.1.4
 - Add `Ansi.reversed` getter.
 

@@ -13,10 +13,9 @@ import 'dart:io' as io;
 /// sequences.
 class Ansi {
   /// Return whether the current stdout terminal supports ANSI escape sequences.
-  static bool get terminalSupportsAnsi {
-    return io.stdout.supportsAnsiEscapes &&
-        io.stdioType(io.stdout) == io.StdioType.terminal;
-  }
+  static bool get terminalSupportsAnsi =>
+      io.stdout.supportsAnsiEscapes &&
+      io.stdioType(io.stdout) == io.StdioType.terminal;
 
   final bool useAnsi;
 
@@ -64,14 +63,13 @@ class Ansi {
 /// standard status messages, trace level output, and indeterminate progress.
 abstract class Logger {
   /// Create a normal [Logger]; this logger will not display trace level output.
-  factory Logger.standard({Ansi ansi}) => new StandardLogger(ansi: ansi);
+  factory Logger.standard({Ansi ansi}) => StandardLogger(ansi: ansi);
 
   /// Create a [Logger] that will display trace level output.
   ///
   /// If [logTime] is `true`, this logger will display the time of the message.
-  factory Logger.verbose({Ansi ansi, bool logTime: true}) {
-    return new VerboseLogger(ansi: ansi, logTime: logTime);
-  }
+  factory Logger.verbose({Ansi ansi, bool logTime = true}) =>
+      VerboseLogger(ansi: ansi, logTime: logTime);
 
   Ansi get ansi;
 
@@ -99,7 +97,7 @@ abstract class Progress {
   final String message;
   final Stopwatch _stopwatch;
 
-  Progress(this.message) : _stopwatch = new Stopwatch()..start();
+  Progress(this.message) : _stopwatch = Stopwatch()..start();
 
   Duration get elapsed => _stopwatch.elapsed;
 
@@ -111,19 +109,22 @@ abstract class Progress {
 }
 
 class StandardLogger implements Logger {
+  @override
   Ansi ansi;
 
   StandardLogger({this.ansi}) {
-    ansi ??= new Ansi(Ansi.terminalSupportsAnsi);
+    ansi ??= Ansi(Ansi.terminalSupportsAnsi);
   }
 
+  @override
   bool get isVerbose => false;
 
   Progress _currentProgress;
 
+  @override
   void stderr(String message) {
     if (_currentProgress != null) {
-      Progress progress = _currentProgress;
+      final progress = _currentProgress;
       _currentProgress = null;
       progress.cancel();
     }
@@ -131,9 +132,10 @@ class StandardLogger implements Logger {
     io.stderr.writeln(message);
   }
 
+  @override
   void stdout(String message) {
     if (_currentProgress != null) {
-      Progress progress = _currentProgress;
+      final progress = _currentProgress;
       _currentProgress = null;
       progress.cancel();
     }
@@ -141,22 +143,25 @@ class StandardLogger implements Logger {
     print(message);
   }
 
+  @override
   void trace(String message) {}
 
+  @override
   Progress progress(String message) {
     if (_currentProgress != null) {
-      Progress progress = _currentProgress;
+      final progress = _currentProgress;
       _currentProgress = null;
       progress.cancel();
     }
 
-    Progress progress = ansi.useAnsi
-        ? new AnsiProgress(ansi, message)
-        : new SimpleProgress(this, message);
+    final progress = ansi.useAnsi
+        ? AnsiProgress(ansi, message)
+        : SimpleProgress(this, message);
     _currentProgress = progress;
     return progress;
   }
 
+  @override
   @Deprecated('This method will be removed in the future')
   void flush() {}
 }
@@ -176,7 +181,7 @@ class SimpleProgress extends Progress {
 }
 
 class AnsiProgress extends Progress {
-  static const List<String> kAnimationItems = const ['/', '-', '\\', '|'];
+  static const List<String> kAnimationItems = ['/', '-', '\\', '|'];
 
   final Ansi ansi;
 
@@ -184,9 +189,9 @@ class AnsiProgress extends Progress {
   Timer _timer;
 
   AnsiProgress(this.ansi, String message) : super(message) {
-    io.stdout.write('${message}...  '.padRight(40));
+    io.stdout.write('$message...  '.padRight(40));
 
-    _timer = new Timer.periodic(new Duration(milliseconds: 80), (t) {
+    _timer = Timer.periodic(const Duration(milliseconds: 80), (t) {
       _index++;
       _updateDisplay();
     });
@@ -203,7 +208,7 @@ class AnsiProgress extends Progress {
   }
 
   @override
-  void finish({String message, bool showTiming: false}) {
+  void finish({String message, bool showTiming = false}) {
     if (_timer.isActive) {
       _timer.cancel();
       _updateDisplay(isFinal: true, message: message, showTiming: showTiming);
@@ -211,20 +216,20 @@ class AnsiProgress extends Progress {
   }
 
   void _updateDisplay(
-      {bool isFinal: false,
-      bool cancelled: false,
+      {bool isFinal = false,
+      bool cancelled = false,
       String message,
-      bool showTiming: false}) {
-    String char = kAnimationItems[_index % kAnimationItems.length];
+      bool showTiming = false}) {
+    var char = kAnimationItems[_index % kAnimationItems.length];
     if (isFinal || cancelled) {
       char = '';
     }
-    io.stdout.write('${ansi.backspace}${char}');
+    io.stdout.write('${ansi.backspace}$char');
     if (isFinal || cancelled) {
       if (message != null) {
         io.stdout.write(message.isEmpty ? ' ' : message);
       } else if (showTiming) {
-        String time = (elapsed.inMilliseconds / 1000.0).toStringAsFixed(1);
+        final time = (elapsed.inMilliseconds / 1000.0).toStringAsFixed(1);
         io.stdout.write('${time}s');
       } else {
         io.stdout.write(' ');
@@ -235,33 +240,40 @@ class AnsiProgress extends Progress {
 }
 
 class VerboseLogger implements Logger {
+  @override
   Ansi ansi;
   bool logTime;
   Stopwatch _timer;
 
   VerboseLogger({this.ansi, this.logTime}) {
-    ansi ??= new Ansi(Ansi.terminalSupportsAnsi);
+    ansi ??= Ansi(Ansi.terminalSupportsAnsi);
     logTime ??= false;
 
-    _timer = new Stopwatch()..start();
+    _timer = Stopwatch()..start();
   }
 
+  @override
   bool get isVerbose => true;
 
+  @override
   void stdout(String message) {
     io.stdout.writeln('${_createPrefix()}$message');
   }
 
+  @override
   void stderr(String message) {
     io.stderr.writeln('${_createPrefix()}${ansi.red}$message${ansi.none}');
   }
 
+  @override
   void trace(String message) {
     io.stdout.writeln('${_createPrefix()}${ansi.gray}$message${ansi.none}');
   }
 
-  Progress progress(String message) => new SimpleProgress(this, message);
+  @override
+  Progress progress(String message) => SimpleProgress(this, message);
 
+  @override
   @Deprecated('This method will be removed in the future')
   void flush() {}
 
@@ -270,13 +282,13 @@ class VerboseLogger implements Logger {
       return '';
     }
 
-    double seconds = _timer.elapsedMilliseconds / 1000.0;
-    int minutes = seconds ~/ 60;
+    var seconds = _timer.elapsedMilliseconds / 1000.0;
+    final minutes = seconds ~/ 60;
     seconds -= minutes * 60.0;
 
-    StringBuffer buf = new StringBuffer();
+    final buf = StringBuffer();
     if (minutes > 0) {
-      buf.write((minutes % 60));
+      buf.write(minutes % 60);
       buf.write('m ');
     }
 
