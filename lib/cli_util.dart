@@ -57,4 +57,18 @@ Directory getSdkDir([List<String> cliArgs]) {
 }
 
 /// Return the path to the current Dart SDK.
-String getSdkPath() => path.dirname(path.dirname(Platform.resolvedExecutable));
+String getSdkPath() {
+  // Handle the case of a finished dart-sdk
+  var fromSdkPath = path.dirname(path.dirname(Platform.resolvedExecutable));
+  if (isSdkDir(Directory(fromSdkPath))) {
+    return fromSdkPath;
+  }
+  // Handle the case where Platform.executable is a sibling of the SDK directory
+  // (this happens during internal testing).
+  final fromRepoPath =
+      path.join(path.dirname(Platform.resolvedExecutable), 'dart-sdk');
+  if (isSdkDir(Directory(fromRepoPath))) return fromRepoPath;
+
+  // This is likely not useful. Try anyway.
+  return fromSdkPath;
+}
