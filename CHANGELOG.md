@@ -1,7 +1,7 @@
 ## 0.3.4
 
 - Introduce `applicationConfigHome` for making it easy to consistently find the
-  user-specification application configuration folder.
+  user-specific application configuration folder.
 
 ## 0.3.3
 

@@ -64,7 +64,7 @@ String getSdkPath() => path.dirname(path.dirname(Platform.resolvedExecutable));
 /// platform.
 ///
 /// This is a location appropriate for storing application specific
-/// configuration for the current user. The [productName] should be unqiue to
+/// configuration for the current user. The [productName] should be unique to
 /// avoid clashes with other applications on the same machine. This method won't
 /// actually create the folder, merely return the recommended location for
 /// storing user-specific application configuration.
@@ -105,9 +105,13 @@ String get _configHome {
     if (xdgConfigHome != null) {
       return xdgConfigHome;
     }
+    // XDG Base Directory Specification says to use $HOME/.config/ when
+    // $XDG_CONFIG_HOME isn't defined.
     return path.join(_home, '.config');
   }
 
+  // We have no guidelines, perhaps we should just do: $HOME/.config/
+  // same as XDG specification would specify as fallback.
   return path.join(_home, '.config');
 }
 
