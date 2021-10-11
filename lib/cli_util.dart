@@ -80,7 +80,8 @@ String getSdkPath() => path.dirname(path.dirname(Platform.resolvedExecutable));
 /// [XDG Base Directory Specification][1] on Linux and [File System Basics][2]
 /// on Mac OS.
 ///
-/// Throws an IOException if `%APPDATA%` or `$HOME` is needed but undefined.
+/// Throws an [EnvironmentNotFoundException] if `%APPDATA%` or `$HOME` is needed
+/// but undefined.
 ///
 /// [1]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 /// [2]: https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW1
@@ -91,7 +92,7 @@ String get _configHome {
   if (Platform.isWindows) {
     final appdata = Platform.environment['APPDATA'];
     if (appdata == null) {
-      throw _NoEnvironmentFoundException(
+      throw EnvironmentNotFoundException(
           'Environment variable %APPDATA% is not defined!');
     }
     return appdata;
@@ -119,15 +120,15 @@ String get _configHome {
 String get _home {
   final home = Platform.environment['HOME'];
   if (home == null) {
-    throw _NoEnvironmentFoundException(
+    throw EnvironmentNotFoundException(
         'Environment variable \$HOME is not defined!');
   }
   return home;
 }
 
-class _NoEnvironmentFoundException implements IOException {
+class EnvironmentNotFoundException implements Exception {
   final String message;
-  _NoEnvironmentFoundException(this.message);
+  EnvironmentNotFoundException(this.message);
   @override
   String toString() {
     return message;
