@@ -130,7 +130,7 @@ class StandardLogger implements Logger {
   void stderr(String message) {
     _cancelProgress();
 
-    io.stderr.writeln(message);
+    io.stderr.writeln('${ansi.red}$message${ansi.none}');
   }
 
   @override
