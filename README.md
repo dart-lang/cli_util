@@ -63,8 +63,3 @@ Please file feature requests and bugs at the [issue tracker][tracker].
 
 [analyzer]: https://pub.dev/packages/analyzer
 [tracker]: https://github.com/dart-lang/cli_util/issues
-
-## Publishing automation
-
-For information about our publishing automation and release process, see
-https://github.com/dart-lang/ecosystem/wiki/Publishing-automation.
