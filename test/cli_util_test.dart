@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cli_util/cli_util.dart';
@@ -24,25 +25,17 @@ void defineTests() {
 
     test('has an ancestor folder that exists', () {
       final path = p.split(applicationConfigHome('dart'));
-      // We expect that first two segments of the path exists.. This is really
+      // We expect that first two segments of the path exist. This is really
       // just a dummy check that some part of the path exists.
       expect(Directory(p.joinAll(path.take(2))).existsSync(), isTrue);
     });
 
-    test('Throws IOException when run with empty environment', () {
-      final scriptPath = p.join('test', 'print_config_home.dart');
-      final result = Process.runSync(
-        Platform.resolvedExecutable,
-        [scriptPath],
-        environment: {},
-        includeParentEnvironment: false,
-      );
-      final varName = Platform.isWindows ? '%APPDATA%' : r'$HOME';
-      expect(
-        (result.stdout as String).trim(),
-        'Caught: Environment variable $varName is not defined!',
-      );
-      expect(result.exitCode, 0);
+    test('empty environment throws exception', () async {
+      expect(() {
+        runZoned(() => applicationConfigHome('dart'), zoneValues: {
+          #environmentOverrides: <String, String>{},
+        });
+      }, throwsA(isA<EnvironmentNotFoundException>()));
     });
   });
 }

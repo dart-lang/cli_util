@@ -5,6 +5,7 @@
 /// Utilities to return the Dart SDK location.
 library cli_util;
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
@@ -42,7 +43,7 @@ String applicationConfigHome(String productName) =>
 
 String get _configHome {
   if (Platform.isWindows) {
-    final appdata = Platform.environment['APPDATA'];
+    final appdata = _env['APPDATA'];
     if (appdata == null) {
       throw EnvironmentNotFoundException(
           'Environment variable %APPDATA% is not defined!');
@@ -55,7 +56,7 @@ String get _configHome {
   }
 
   if (Platform.isLinux) {
-    final xdgConfigHome = Platform.environment['XDG_CONFIG_HOME'];
+    final xdgConfigHome = _env['XDG_CONFIG_HOME'];
     if (xdgConfigHome != null) {
       return xdgConfigHome;
     }
@@ -70,7 +71,7 @@ String get _configHome {
 }
 
 String get _home {
-  final home = Platform.environment['HOME'];
+  final home = _env['HOME'];
   if (home == null) {
     throw EnvironmentNotFoundException(
         r'Environment variable $HOME is not defined!');
@@ -84,3 +85,8 @@ class EnvironmentNotFoundException implements Exception {
   @override
   String toString() => message;
 }
+
+// This zone override exists solely for testing (see lib/cli_util_test.dart).
+Map<String, String> get _env =>
+    (Zone.current[#environmentOverrides] as Map<String, String>?) ??
+    Platform.environment;
