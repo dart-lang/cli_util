@@ -249,6 +249,66 @@ class AnsiProgress extends Progress {
   }
 }
 
+/// A highly customizable [Progress].
+class CustomProgress extends Progress {
+  late final Timer _timer;
+  final String Function(Duration elapsed) _messageBuilder;
+  String? _prevMessage;
+
+  /// Creates a customizable [Progress].
+  ///
+  /// This [Progress] invokes the [message] callback with a [refreshPer] period
+  /// to create a new message and overwrite the current line.
+  CustomProgress({
+    required String Function(Duration elapsed) message,
+    Duration refreshPer = const Duration(milliseconds: 80),
+  })  : _messageBuilder = message,
+        super('') {
+    _timer = Timer.periodic(
+      refreshPer,
+      (_) => _updateDisplay(message: _messageBuilder(elapsed)),
+    );
+    _updateDisplay(message: _messageBuilder(const Duration()));
+  }
+
+  @override
+  void cancel({String? message}) {
+    if (_timer.isActive) {
+      _timer.cancel();
+      _updateDisplay(message: message, isFinal: true);
+    }
+  }
+
+  @override
+  void finish({String? message, bool showTiming = false}) {
+    assert(
+      !showTiming,
+      // Because it is unclear that in what format
+      // the timing should be displayed...
+      "'$CustomProgress.finish' doesn't support 'showTiming' feature.",
+    );
+    if (_timer.isActive) {
+      _timer.cancel();
+      _updateDisplay(message: message, isFinal: true);
+    }
+  }
+
+  void _updateDisplay({String? message, bool isFinal = false}) {
+    const cr = '\r';
+    final msg = (message == null || message.isEmpty) ? '' : message;
+
+    if (_prevMessage != null) {
+      final padding = (_prevMessage?.length ?? 0) + cr.length;
+      io.stdout.write('$cr$msg'.padRight(padding));
+    } else {
+      io.stdout.write(msg);
+    }
+
+    if (isFinal) io.stdout.writeln();
+    _prevMessage = msg;
+  }
+}
+
 class VerboseLogger implements Logger {
   @override
   Ansi ansi;
