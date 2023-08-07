@@ -11,7 +11,7 @@ Future<void> main(List<String> args) async {
   final progress = CustomProgress(
     refreshPer: const Duration(milliseconds: 50),
     // This callback will be called per 'refreshPer'
-    message: (elapsed) =>
+    messageBuilder: (elapsed) =>
         'Downloading $percentage% (${elapsed.inMilliseconds / 1000.0}s)',
   );
 

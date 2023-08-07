@@ -252,23 +252,24 @@ class AnsiProgress extends Progress {
 /// A highly customizable [Progress].
 class CustomProgress extends Progress {
   late final Timer _timer;
-  final String Function(Duration elapsed) _messageBuilder;
   String? _prevMessage;
 
   /// Creates a customizable [Progress].
   ///
-  /// This [Progress] invokes the [message] callback with a [refreshPer] period
-  /// to create a new message and overwrite the current line.
+  /// This [Progress] invokes the [messageBuilder] callback with a [refreshPer]
+  /// period to create a new message and overwrite the current line.
+  /// The [messageBuilder] should return a single line string,
+  /// not including newline characters.
   CustomProgress({
-    required String Function(Duration elapsed) message,
+    required String Function(Duration elapsed) messageBuilder,
+    String message = '',
     Duration refreshPer = const Duration(milliseconds: 80),
-  })  : _messageBuilder = message,
-        super('') {
+  }) : super(message) {
     _timer = Timer.periodic(
       refreshPer,
-      (_) => _updateDisplay(message: _messageBuilder(elapsed)),
+      (_) => _updateDisplay(message: messageBuilder(elapsed)),
     );
-    _updateDisplay(message: _messageBuilder(const Duration()));
+    _updateDisplay(message: messageBuilder(const Duration()));
   }
 
   @override
