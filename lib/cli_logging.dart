@@ -136,7 +136,7 @@ class StandardLogger implements Logger {
   void stdout(String message) {
     _cancelProgress();
 
-    print(message);
+    io.stdout.writeln(message);
   }
 
   @override
