@@ -1,3 +1,8 @@
+## UNRELEASED
+
+- Replace `print` with `stdout.writeln` in `StandardLogger` to be in line with
+  all other methods.
+
 ## 0.4.0
 
 - Remove the deprecated method `getSdkDir()` (instead, use `getSdkPath()`).
