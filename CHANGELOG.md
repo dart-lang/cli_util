@@ -1,7 +1,12 @@
+## 0.4.1
+
+- Require Dart 3.0.
+- Update to `package:dart_flutter_team_lints` 2.0.
+
 ## 0.4.0
 
 - Remove the deprecated method `getSdkDir()` (instead, use `getSdkPath()`).
-- Require Dart 2.19
+- Require Dart 2.19.
 
 ## 0.3.5
 - Make `applicationConfigHome` throw an `Exception` when it fails to find a
