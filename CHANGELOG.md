@@ -1,7 +1,7 @@
 ## 0.4.1
 
+- Fix a broken link in the readme.
 - Require Dart 3.0.
-- Update to `package:dart_flutter_team_lints` 2.0.
 
 ## 0.4.0
 
