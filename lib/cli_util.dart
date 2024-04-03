@@ -10,11 +10,14 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-/// Return the path to the current Dart SDK.
-String getSdkPath() => path.dirname(path.dirname(Platform.resolvedExecutable));
+/// The path to the current Dart SDK.
+String get sdkPath => path.dirname(path.dirname(Platform.resolvedExecutable));
 
-/// Get the user-specific application configuration folder for the current
-/// platform.
+/// Returns the path to the current Dart SDK.
+@Deprecated("Use 'sdkPath' instead")
+String getSdkPath() => sdkPath;
+
+/// The user-specific application configuration folder for the current platform.
 ///
 /// This is a location appropriate for storing application specific
 /// configuration for the current user. The [productName] should be unique to
@@ -70,18 +73,12 @@ String get _configHome {
   return path.join(_home, '.config');
 }
 
-String get _home {
-  final home = _env['HOME'];
-  if (home == null) {
-    throw EnvironmentNotFoundException(
-        r'Environment variable $HOME is not defined!');
-  }
-  return home;
-}
+String get _home => _env['HOME'] ?? (throw EnvironmentNotFoundException('HOME'));
 
 class EnvironmentNotFoundException implements Exception {
-  final String message;
-  EnvironmentNotFoundException(this.message);
+  final String entryName;  
+  String get message => 'Environment variable \$$entryName is not defined!';
+  EnvironmentNotFoundException(this.entryName);
   @override
   String toString() => message;
 }
