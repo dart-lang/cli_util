@@ -73,7 +73,8 @@ String get _configHome {
   return path.join(_home, '.config');
 }
 
-String get _home => _env['HOME'] ?? (throw EnvironmentNotFoundException('HOME'));
+String get _home => 
+    _env['HOME'] ?? (throw EnvironmentNotFoundException('HOME'));
 
 class EnvironmentNotFoundException implements Exception {
   final String entryName;  
