@@ -73,8 +73,8 @@ String _requireEnv(String name) =>
 
 /// Exception thrown if a required environment entry does not exist.
 ///
-/// Thrown by [applicationConfigHome] if an expected and required, platform specific,
-/// environment entry is not available.
+/// Thrown by [applicationConfigHome] if an expected and required 
+/// platform specific environment entry is not available.
 class EnvironmentNotFoundException implements Exception {
   /// Name of environment entry which was needed, but not found.
   final String entryName;
