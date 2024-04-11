@@ -1,4 +1,4 @@
-## 0.4.2-dev
+## 0.4.2-wip
 
 - Add `sdkPath` getter, deprecate `getSdkPath` function.
   
