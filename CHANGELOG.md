@@ -1,7 +1,9 @@
 ## 0.4.2-wip
 
 - Add `sdkPath` getter, deprecate `getSdkPath` function.
-  
+- Introduce `applicationCacheHome`, `applicationDataHome`,
+  `applicationRuntimeDir` and `applicationStateHome`.
+
 ## 0.4.1
 
 - Fix a broken link in the readme.
