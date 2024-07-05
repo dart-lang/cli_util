@@ -185,7 +185,7 @@ String _baseDirectory(_BaseDirectory dir) {
 
   switch (dir) {
     case _BaseDirectory.runtime:
-      // not a great fallback
+    // not a great fallback
     case _BaseDirectory.cache:
       return path.join(_home, '.cache');
     case _BaseDirectory.config:
