@@ -16,24 +16,33 @@ void main() {
     });
   });
 
-  group('applicationConfigHome', () {
-    test('returns a non-empty string', () {
-      expect(applicationConfigHome('dart'), isNotEmpty);
-    });
+  final functions = {
+    'applicationCacheHome': applicationCacheHome,
+    'applicationConfigHome': applicationConfigHome,
+    'applicationDataHome': applicationDataHome,
+    'applicationRuntimeDir': applicationRuntimeDir,
+    'applicationStateHome': applicationStateHome,
+  };
+  functions.forEach((name, fn) {
+    group(name, () {
+      test('returns a non-empty string', () {
+        expect(fn('dart'), isNotEmpty);
+      });
 
-    test('has an ancestor folder that exists', () {
-      final path = p.split(applicationConfigHome('dart'));
-      // We expect that first two segments of the path exist. This is really
-      // just a dummy check that some part of the path exists.
-      expect(Directory(p.joinAll(path.take(2))).existsSync(), isTrue);
-    });
+      test('has an ancestor folder that exists', () {
+        final path = p.split(fn('dart'));
+        // We expect that first two segments of the path exist. This is really
+        // just a dummy check that some part of the path exists.
+        expect(Directory(p.joinAll(path.take(2))).existsSync(), isTrue);
+      });
 
-    test('empty environment throws exception', () async {
-      expect(() {
-        runZoned(() => applicationConfigHome('dart'), zoneValues: {
-          #environmentOverrides: <String, String>{},
-        });
-      }, throwsA(isA<EnvironmentNotFoundException>()));
+      test('empty environment throws exception', () async {
+        expect(() {
+          runZoned(() => fn('dart'), zoneValues: {
+            #environmentOverrides: <String, String>{},
+          });
+        }, throwsA(isA<EnvironmentNotFoundException>()));
+      });
     });
   });
 }
