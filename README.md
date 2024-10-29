@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This repo has moved to https://github.com/dart-lang/tools/tree/main/pkgs/cli_util
+
 [![Dart CI](https://github.com/dart-lang/cli_util/actions/workflows/build.yaml/badge.svg)](https://github.com/dart-lang/cli_util/actions/workflows/build.yaml)
 [![Pub](https://img.shields.io/pub/v/cli_util.svg)](https://pub.dev/packages/cli_util)
 [![package publisher](https://img.shields.io/pub/publisher/cli_util.svg)](https://pub.dev/packages/cli_util/publisher)
